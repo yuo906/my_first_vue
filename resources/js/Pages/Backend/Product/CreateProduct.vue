@@ -44,6 +44,19 @@ export default {
                 },
             });
         },
+
+        uploadImage(event) {
+            const reader = new FileReader();
+            reader.readAsDataURL(event.target.files[0]);
+            reader.onload = () => {
+                console.log(reader.result);
+                this.formData.image = reader.result;
+            };
+            reader.onerror = (error) => {
+                console.log('Error: ', error);
+            };
+        },
+
     },
 };
 </script>
@@ -60,6 +73,15 @@ export default {
       <form @submit.prevent="submitData()">
         <label>商品名稱:
           <input v-model="formData.name" name="name" type="text" required>
+        </label>
+        <label>商品照片:
+          <div class="relative inline-block">
+            <div v-if="!formData.image" class="border w-[200px] aspect-[4/3] flex justify-center items-center text-[48px] cursor-pointer">
+              +
+            </div>
+            <img v-else :src="formData.image" class="w-[200px] aspect-[4/3] object-cover" alt="">
+            <input id="image" class="absolute top-1/2 left-1/2 translate-y-[10px] opacity-0" name="image" type="file" required @change="(event) => uploadImage(event)">
+          </div>
         </label>
         <label>商品價格:
           <input v-model="formData.price" name="price" type="number" min="0" required>
