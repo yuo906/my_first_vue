@@ -1,4 +1,5 @@
 <script>
+// import { router } from '@inertiajs/vue3';
 export default {
   props: {
     productInfo: {
@@ -7,15 +8,54 @@ export default {
       default: () => ({}),
     },
   },
+  emits: ['addCart'],
+  data() {
+    return {
+      num: 1,
+    };
+  },
+  methods: {
+    plus() {
+      this.num++;
+    },
+    minus() {
+      const { num } = this;
+      if (num <= 1) return;
+      this.num--;
+    },
+    inputNum() {
+      const { num } = this;
+      if (num <= 0) {
+        this.num = 1;
+      }
+    },
+    addCart() {
+      const { num } = this;
+      // 寫法一:交給組件送資料
+      //   router.visit(route('product.addCart'), { method: 'post', data: { id: productInfo.id, qty: num }, preserveState: true });
+      // 寫法二:交給引入此組件的頁面去處理
+      this.$emit('addCart', { qty: num });
+    },
+  },
 };
 </script>
 
 <template>
   <section class="card">
     <img :src="productInfo.image" class="w-full aspect-[4/3] object-cover" alt="">
+    <slot />
     <h3 class="name">商品名稱: {{ productInfo.name }}</h3>
-    <h3 class="name">商品價格:${{ productInfo.price }}</h3>
+    <h3 class="name">商品價格: ${{ productInfo.price }}</h3>
     <h3 class="name">商品描述: {{ productInfo.desc }}</h3>
+    <slot name="text" />
+    <div class="flex justify-between items-stretch">
+      <div class="flex items-center w-2/3 border border-black">
+        <button type="button" class="grow text-center" @click="minus()">-</button>
+        <input v-model="num" type="number" class="w-2/3 border-x-[1px] border-y-0 outline-0 focus:ring-0 text-center" @change="inputNum()">
+        <button type="button" class="grow text-center" @click="plus()">+</button>
+      </div>
+      <button type="button" class="w-1/3 border bg-[wheat] text-xs" @click="addCart()">加入購物車</button>
+    </div>
   </section>
 </template>
 

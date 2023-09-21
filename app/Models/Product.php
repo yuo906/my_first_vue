@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $price
  * @property int|null $public
  * @property string|null $desc
+ * @property string|null $image
  *
  * @package App\Models
  */
@@ -37,6 +38,14 @@ class Product extends Model
         'price',
         'public',
         'desc',
-        'image',
+        'image'
     ];
+
+    public function cart() {
+       return $this->hasMany(Cart::class, 'product_id', 'id');
+    }
+
+    public function ProductImage() {
+        return $this->hasMany(ProductImage::class, 'id', 'product_id');
+     }
 }
